@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-var PathFlag = "/"
+var PathFlag string
 
 var Db *gorm.DB
 

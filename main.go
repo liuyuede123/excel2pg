@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -21,6 +22,11 @@ var dbPassword string
 var dbPort string
 
 func main() {
+	sysType := runtime.GOOS
+	pkg.PathFlag = "/"
+	if sysType == "windows" {
+		pkg.PathFlag = "\\"
+	}
 	args := os.Args
 	args = args[1:]
 	for _, arg := range args {
