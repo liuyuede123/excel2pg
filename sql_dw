@@ -1,0 +1,1449 @@
+--dw--
+--dwd_财务_淘系_淘宝_昨日订单
+CREATE TABLE if not exists public."dwd_财务_淘系_淘宝_昨日订单" (
+    主订单编号 character varying(200)  NULL,
+    子订单编号 character varying(200)  NULL,
+    商品名称 character varying(200)  NULL,
+    价格 numeric(10,2)  NULL,
+    购买数量 integer  NULL,
+    外部系统编号 character varying  NULL,
+    商品属性 character varying  NULL,
+    套餐信息 character varying  NULL,
+    备注 character varying  NULL,
+    订单状态 character varying  NULL,
+    商家编码 character varying  NULL,
+    支付单号 character varying  NULL,
+    子订单买家应付货款 numeric(10,2)  NULL,
+    买家实际支付金额 numeric(10,2)  NULL,
+    退款状态 character varying  NULL,
+    退款金额 numeric(10,2)  NULL,
+    订单创建时间 timestamp without time zone  NULL,
+    订单付款时间 timestamp without time zone  NULL,
+    数据获取日 date  NULL,
+    数据发生日 date  NULL,
+    数据获取日和发生日间隔 integer  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_淘宝_昨日订单" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_淘宝_昨日订单"
+SELECT  主订单编号
+        ,子订单编号
+        ,标题 商品名称
+        ,CAST((CASE WHEN 价格 ~* '[0-9.]' THEN 价格 ELSE NULL END) AS DECIMAL(10, 2)) 价格
+        ,CAST(
+            (
+                CASE    WHEN 购买数量= '' THEN NULL
+                        WHEN 购买数量= '-' THEN NULL 
+                        ELSE 购买数量 
+                END
+            ) AS INTEGER
+        ) AS 购买数量
+        ,CASE    WHEN 外部系统编号= '' OR 外部系统编号= 'null' THEN NULL 
+                 ELSE 外部系统编号 
+         END AS 外部系统编号
+        ,CASE    WHEN 商品属性= '' OR 商品属性= 'null' THEN NULL 
+                 ELSE 商品属性 
+         END AS 商品属性
+        -- sku名称
+        ,CASE    WHEN 套餐信息= '' OR 套餐信息= 'null' THEN NULL 
+                 ELSE 套餐信息 
+         END AS 套餐信息
+        ,CASE    WHEN 备注= '' OR 备注= 'null' THEN NULL 
+                 ELSE 备注 
+         END AS 备注
+        ,CASE    WHEN 订单状态= '' OR 订单状态= 'null' THEN NULL 
+                 ELSE 订单状态 
+         END AS 订单状态
+        ,CASE    WHEN 商家编码= '' OR 商家编码= 'null' THEN NULL 
+                 ELSE 商家编码 
+         END AS 商家编码
+        ,CASE    WHEN 支付单号= '' OR 支付单号= 'null' THEN NULL 
+                 ELSE 支付单号 
+         END AS 支付单号
+        ,CAST(
+            (
+                CASE    WHEN 买家应付货款= '' THEN NULL
+                        WHEN 买家应付货款= '-' THEN NULL 
+                        ELSE 买家应付货款 
+                END
+            ) AS DECIMAL(10, 2)
+        ) AS 子订单买家应付货款
+        ,CAST(
+            (
+                CASE    WHEN 买家实际支付金额= '' THEN NULL
+                        WHEN 买家实际支付金额= '-' THEN NULL 
+                        ELSE 买家实际支付金额 
+                END
+            ) AS DECIMAL(10, 2)
+        ) AS 买家实际支付金额
+        ,CASE    WHEN 退款状态= '' OR 退款状态= 'null' THEN NULL 
+                 ELSE 退款状态 
+         END AS 退款状态
+        ,CAST(
+            (
+                CASE    WHEN 退款金额= '' THEN NULL
+                        WHEN 退款金额= '-' THEN NULL
+                        WHEN 退款金额= '无退款申请' THEN NULL 
+                        ELSE 退款金额 
+                END
+            ) AS DECIMAL(10, 2)
+        ) 退款金额
+        ,CAST(订单创建时间 AS TIMESTAMP) 订单创建时间
+        ,CAST(CASE WHEN 订单付款时间= '' THEN NULL ELSE 订单付款时间 END AS TIMESTAMP) 订单付款时间
+        ,cast(数据获取日 AS DATE) 数据获取日
+        ,cast(数据发生日 AS DATE) 数据发生日
+        ,cast(数据获取日和发生日间隔 AS integer) 数据获取日和发生日间隔
+        ,cast(数据入库日期 AS DATE) 数据入库日期
+FROM    "财务_淘系_淘宝_昨日订单"
+            WHERE   数据入库日期 = ( SELECT 入库日期 FROM "触发器事件表" ORDER BY 创建时间 DESC LIMIT 1);
+
+--dwd_财务_淘系_淘宝_15日订单
+CREATE TABLE if not exists public."dwd_财务_淘系_淘宝_15日订单" (
+    主订单编号 character varying(200)  NULL,
+    子订单编号 character varying(200)  NULL,
+    商品名称 character varying(200)  NULL,
+    价格 numeric(10,2)  NULL,
+    购买数量 integer  NULL,
+    外部系统编号 character varying  NULL,
+    商品属性 character varying  NULL,
+    套餐信息 character varying  NULL,
+    备注 character varying  NULL,
+    订单状态 character varying  NULL,
+    商家编码 character varying  NULL,
+    支付单号 character varying  NULL,
+    子订单买家应付货款 numeric(10,2)  NULL,
+    买家实际支付金额 numeric(10,2)  NULL,
+    退款状态 character varying  NULL,
+    退款金额 numeric(10,2)  NULL,
+    订单创建时间 timestamp without time zone  NULL,
+    订单付款时间 timestamp without time zone  NULL,
+    数据获取日 date  NULL,
+    数据发生日 date  NULL,
+    数据获取日和发生日间隔 integer  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_淘宝_15日订单" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_淘宝_15日订单"
+SELECT  主订单编号
+        ,子订单编号
+        ,标题 商品名称
+        ,CAST((CASE WHEN 价格 ~* '[0-9.]' THEN 价格 ELSE NULL END) AS DECIMAL(10, 2)) 价格
+        ,CAST(
+            (
+                CASE    WHEN 购买数量= '' THEN NULL
+                        WHEN 购买数量= '-' THEN NULL 
+                        ELSE 购买数量 
+                END
+            ) AS INTEGER
+        ) AS 购买数量
+        ,CASE    WHEN 外部系统编号= '' OR 外部系统编号= 'null' THEN NULL 
+                 ELSE 外部系统编号 
+         END AS 外部系统编号
+        ,CASE    WHEN 商品属性= '' OR 商品属性= 'null' THEN NULL 
+                 ELSE 商品属性 
+         END AS 商品属性
+        -- sku名称
+        ,CASE    WHEN 套餐信息= '' OR 套餐信息= 'null' THEN NULL 
+                 ELSE 套餐信息 
+         END AS 套餐信息
+        ,CASE    WHEN 备注= '' OR 备注= 'null' THEN NULL 
+                 ELSE 备注 
+         END AS 备注
+        ,CASE    WHEN 订单状态= '' OR 订单状态= 'null' THEN NULL 
+                 ELSE 订单状态 
+         END AS 订单状态
+        ,CASE    WHEN 商家编码= '' OR 商家编码= 'null' THEN NULL 
+                 ELSE 商家编码 
+         END AS 商家编码
+        ,CASE    WHEN 支付单号= '' OR 支付单号= 'null' THEN NULL 
+                 ELSE 支付单号 
+         END AS 支付单号
+        ,CAST(
+            (
+                CASE    WHEN 买家应付货款= '' THEN NULL
+                        WHEN 买家应付货款= '-' THEN NULL 
+                        ELSE 买家应付货款 
+                END
+            ) AS DECIMAL(10, 2)
+        ) AS 子订单买家应付货款
+        ,CAST(
+            (
+                CASE    WHEN 买家实际支付金额= '' THEN NULL
+                        WHEN 买家实际支付金额= '-' THEN NULL 
+                        ELSE 买家实际支付金额 
+                END
+            ) AS DECIMAL(10, 2)
+        ) AS 买家实际支付金额
+        ,CASE    WHEN 退款状态= '' OR 退款状态= 'null' THEN NULL 
+                 ELSE 退款状态 
+         END AS 退款状态
+        ,CAST(
+            (
+                CASE    WHEN 退款金额= '' THEN NULL
+                        WHEN 退款金额= '-' THEN NULL
+                        WHEN 退款金额= '无退款申请' THEN NULL 
+                        ELSE 退款金额 
+                END
+            ) AS DECIMAL(10, 2)
+        ) 退款金额
+        ,CAST(订单创建时间 AS TIMESTAMP) 订单创建时间
+        ,CAST(CASE WHEN 订单付款时间= '' THEN NULL ELSE 订单付款时间 END AS TIMESTAMP) 订单付款时间
+        ,cast(数据获取日 AS DATE) 数据获取日
+        ,cast(数据发生日 AS DATE) 数据发生日
+        ,cast(数据获取日和发生日间隔 AS integer) 数据获取日和发生日间隔
+        ,cast(数据入库日期 AS DATE) 数据入库日期
+FROM    "财务_淘系_淘宝_15日订单"
+            WHERE   数据入库日期 = ( SELECT 入库日期 FROM "触发器事件表" ORDER BY 创建时间 DESC LIMIT 1);
+--dwd_财务_淘系_淘宝联盟_订单结算
+CREATE TABLE if not exists public."dwd_财务_淘系_淘宝联盟_订单结算" (
+    确认收货时间 timestamp without time zone  NULL,
+    账户支出时间 timestamp without time zone  NULL,
+    淘客结算时间 timestamp without time zone  NULL,
+    创建时间 timestamp without time zone  NULL,
+    计划名称 character varying  NULL,
+    商品id character varying(200)  NULL,
+    商品名称 character varying(200)  NULL,
+    实际成交价格 numeric(10,2)  NULL,
+    成交商品数 integer  NULL,
+    佣金比例 numeric  NULL,
+    佣金 numeric(10,2)  NULL,
+    服务费率 numeric  NULL,
+    服务费金额 numeric(10,2)  NULL,
+    淘宝父订单编号 character varying(200)  NULL,
+    淘宝子订单编号 character varying(200)  NULL,
+    来源或淘客昵称 character varying  NULL,
+    团长名称 character varying  NULL,
+    是否预售未付尾款订单 character varying  NULL,
+    备注 character varying  NULL,
+    数据入库日期 date  NULL);
+	
+delete from  "dwd_财务_淘系_淘宝联盟_订单结算" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_淘宝联盟_订单结算"	 
+SELECT  cast(确认收货时间 as TIMESTAMP)  确认收货时间,
+       cast(账户支出时间 as TIMESTAMP)  账户支出时间,
+       cast(淘客结算时间 as TIMESTAMP) 淘客结算时间,
+       cast(创建时间 as TIMESTAMP) 创建时间,
+       case when 计划名称= '' then null else 计划名称 end 计划名称,
+       "商品id",
+       商品名称,
+       cast((CASE WHEN 实际成交价格 ~* '[0-9.]' THEN 实际成交价格 ELSE NULL END) as decimal(10, 2)) 实际成交价格,
+       cast((CASE WHEN 成交商品数 ~* '[0-9.]' THEN 成交商品数 ELSE NULL END) as integer) 成交商品数,
+       round(cast(split_part(CASE WHEN 佣金比例= '' THEN NULL ELSE 佣金比例 END, '%', 1) as numeric)  /100, 4) 佣金比例,
+       cast((CASE WHEN 佣金 ~* '[0-9.]' THEN 佣金 ELSE NULL END) as decimal(10, 2)) 佣金,
+       round(cast(split_part(CASE WHEN 服务费率= '' THEN NULL ELSE 服务费率 END, '%', 1) as numeric)  /100, 4) 服务费率,
+       cast((CASE WHEN 服务费金额 ~* '[0-9.]' THEN 服务费金额 ELSE NULL END) as decimal(10, 2))  服务费金额,
+       淘宝父订单编号,
+       淘宝子订单编号,
+       case when 来源或淘客昵称= '' then null else 来源或淘客昵称 end 来源或淘客昵称,
+       case when 团长名称= '' then null else 团长名称 end 团长名称,
+       case when 是否预售未付尾款订单= '' then null else 是否预售未付尾款订单 end 是否预售未付尾款订单,
+       case when 备注= '' then null else 备注 end 备注,
+       cast(数据入库日期 as date)  数据入库日期
+FROM "财务_淘系_淘宝联盟_订单结算"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+ 
+---dwd_财务_淘系_淘宝联盟_维权退款订单
+CREATE TABLE if not exists public."dwd_财务_淘系_淘宝联盟_维权退款订单" (
+    淘宝订单编号 character varying(200)  NULL,
+    淘宝子订单编号 character varying(200)  NULL,
+    商品名称 character varying(200)  NULL,
+    维权退款金额 numeric(10,2)  NULL,
+    应退回服务费 numeric(10,2)  NULL,
+    应退回佣金 numeric(10,2)  NULL,
+    维权状态 character varying  NULL,
+    订单结算时间 timestamp without time zone  NULL,
+    维权创建时间 timestamp without time zone  NULL,
+    维权完成时间 timestamp without time zone  NULL,
+    淘客维权订单备注 character varying  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_淘宝联盟_维权退款订单" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_淘宝联盟_维权退款订单"	
+SELECT  淘宝订单编号,
+       淘宝子订单编号,
+       商品名称,
+       cast((CASE WHEN 维权退款金额 ~* '[0-9.]' THEN 维权退款金额 ELSE NULL END) as decimal(10, 2)) 维权退款金额,
+       cast((CASE WHEN 应退回服务费 ~* '[0-9.]' THEN 应退回服务费 ELSE NULL END) as decimal(10, 2))  应退回服务费,
+       cast((CASE WHEN 应退回佣金 ~* '[0-9.]' THEN 应退回佣金 ELSE NULL END)  as decimal(10, 2))  应退回佣金,
+        -- 	维权退款金额,
+       case when 维权状态= '' then null else 维权状态 end as 维权状态,
+       cast(case when 订单结算时间= '' then null else 订单结算时间 end AS timestamp)  订单结算时间,
+       CAST(case when 维权创建时间= '' then null else 维权创建时间 end AS timestamp)  维权创建时间,
+       CAST(case when 维权完成时间= ''
+    or 维权完成时间= '	' then null else 维权完成时间 end AS timestamp)  维权完成时间,
+         case when 备注= '' then null else 备注 end AS 淘客维权订单备注,
+         cast(数据入库日期 as date)  数据入库日期
+ FROM "财务_淘系_淘宝联盟_维权退款订单"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+--dwd_财务_淘系_淘宝联盟_商品报表
+  CREATE TABLE if not exists public."dwd_财务_淘系_淘宝联盟_商品报表" (
+    商品名称 character varying(200)  NULL,
+    商品id character varying(200)  NULL,
+    商品链接 character varying(200)  NULL,
+    "付款佣金支出(元)" numeric(10,2)  NULL,
+    付款佣金率 numeric(10,4)  NULL,
+    "付款金额(元)" numeric(10,2)  NULL,
+    付款笔数 integer  NULL,
+    商品折扣率 numeric(10,2)  NULL,
+    进店量 integer  NULL,
+    收藏宝贝量 integer  NULL,
+    添加购物车量 integer  NULL,
+    预售定金笔数 integer  NULL,
+    "预售定金金额(元)" numeric(10,2)  NULL,
+    "预估预售尾款金额(元)" numeric(10,2)  NULL,
+    "预估预售整单金额(元)" numeric(10,2)  NULL,
+    "结算佣金支出(元)" numeric(10,2)  NULL,
+    结算佣金率 numeric(10,4)  NULL,
+    预估预售整单佣金 numeric(10,2)  NULL,
+    "付款服务费支出(元)" numeric(10,2)  NULL,
+    付款服务费率 numeric(10,2)  NULL,
+    "结算服务费支出(元)" numeric(10,2)  NULL,
+    结算服务费率 numeric(10,4)  NULL,
+    "单件商品付款支出费用(元)" numeric(10,2)  NULL,
+    "付款支出费用(元)" numeric(10,2)  NULL,
+    "结算支出费用(元)" numeric(10,2)  NULL,
+    预估预售整单佣金率 numeric(10,4)  NULL,
+    进店人数 integer  NULL,
+    "平均优惠券面额(元)" numeric(10,2)  NULL,
+    付款人数 integer  NULL,
+    统计日期 date  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_淘宝联盟_商品报表" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_淘宝联盟_商品报表"
+select  商品名称,
+       "商品id",
+       商品链接,
+       cast("付款佣金支出(元)" as decimal(10, 2))  as "付款佣金支出(元)",
+       cast(付款佣金率 as DECIMAL(10, 4))  as 付款佣金率,
+       cast("付款金额(元)" as decimal(10, 2))  as "付款金额(元)",
+       cast(付款笔数 as integer)  as 付款笔数,
+       cast(商品折扣率 as decimal(10, 2))  as 商品折扣率,
+       cast(进店量 as integer)  as 进店量,
+       cast(收藏宝贝量 as integer)  as 收藏宝贝量,
+       cast(添加购物车量 as integer) as 添加购物车量,
+       cast(split_part(预售定金笔数, '.', 1)  as integer) as 预售定金笔数,
+       cast("预售定金金额(元)" as decimal(10, 2)) as "预售定金金额(元)",
+       cast("预估预售尾款金额(元)" as decimal(10, 2)) as "预估预售尾款金额(元)",
+       cast("预估预售整单金额(元)" as decimal(10, 2)) as "预估预售整单金额(元)",
+       cast("结算佣金支出(元)" as decimal(10, 2)) as "结算佣金支出(元)",
+       cast(结算佣金率 as decimal(10, 4))  as 结算佣金率,
+       cast(预估预售整单佣金 as decimal(10, 2)) as 预估预售整单佣金,
+       cast("付款服务费支出(元)" as decimal(10, 2)) as "付款服务费支出(元)",
+       cast(付款服务费率 as decimal(10, 2)) as 付款服务费率,
+       cast("结算服务费支出(元)" as decimal(10, 2))  as "结算服务费支出(元)",
+       cast(结算服务费率 as decimal(10, 4))  as 结算服务费率,
+       cast("单件商品付款支出费用(元)" as decimal(10, 2)) as "单件商品付款支出费用(元)",
+       cast("付款支出费用(元)" as decimal(10, 2)) as "付款支出费用(元)",
+       cast("结算支出费用(元)" as decimal(10, 2)) "结算支出费用(元)",
+       cast(预估预售整单佣金率 as decimal(10, 4)) as 预估预售整单佣金率,
+       cast(进店人数 as integer)  as 进店人数,
+       cast("平均优惠券面额(元)" as decimal(10, 2))  as "平均优惠券面额(元)",
+       cast(付款人数 as integer) 付款人数,
+       date(统计日期) 统计日期,
+       date(数据入库日期) 数据入库日期
+  from "财务_淘系_淘宝联盟_商品报表"
+  WHERE   数据入库日期 = ( SELECT 入库日期 FROM "触发器事件表" ORDER BY 创建时间 DESC LIMIT 1);
+---dwd_财务_淘系_生参_商品流量_单品_pc端
+CREATE TABLE if not exists public."dwd_财务_淘系_生参_商品流量_单品_pc端" (
+    流量来源 character varying(255)  NULL,
+    来源明细 character varying  NULL,
+    访客数 integer  NULL,
+    浏览量 integer  NULL,
+    支付金额 numeric(10,2)  NULL,
+    浏览量占比 numeric(10,4)  NULL,
+    店内跳转人数 integer  NULL,
+    跳出本店人数 integer  NULL,
+    收藏人数 integer  NULL,
+    加购人数 integer  NULL,
+    下单买家数 integer  NULL,
+    下单转化率 numeric(10,4)  NULL,
+    支付件数 integer  NULL,
+    支付买家数 integer  NULL,
+    支付转化率 numeric(10,4)  NULL,
+    直接支付买家数 integer  NULL,
+    "收藏商品-支付买家数" integer  NULL,
+    粉丝支付买家数 integer  NULL,
+    "加购商品-支付买家数" integer  NULL,
+    访问来源 character varying  NULL,
+    统计日期 date  NULL,
+    商品id character varying(255)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_生参_商品流量_单品_pc端" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_生参_商品流量_单品_pc端"
+SELECT  流量来源,
+       case when 来源明细 in('-', '', 'null')  then null else 来源明细 end 来源明细,
+       cast(CASE WHEN 访客数 in('-', '', 'null')  THEN NULL ELSE 访客数 END as integer) 访客数,
+       cast(CASE WHEN 浏览量 in('-', '', 'null')  THEN NULL ELSE 浏览量 END as integer) 浏览量,
+       cast((CASE WHEN 支付金额 in('-', '', 'null')  THEN NULL ELSE 支付金额 END) as DECIMAL(10, 2)) 支付金额,
+       CAST(CAST(split_part(CASE WHEN 浏览量占比 in('-', '', 'null')  THEN NULL ELSE 浏览量占比 END, '%', 1) AS DECIMAL(10, 2)) /100 AS DECIMAL(10, 4)) 浏览量占比,
+       cast(CASE WHEN 店内跳转人数 in('-', '', 'null')  THEN NULL ELSE 店内跳转人数 END as integer)  店内跳转人数,
+       cast(CASE WHEN 跳出本店人数 in('-', '', 'null')  THEN NULL ELSE 跳出本店人数 END as integer)  跳出本店人数,
+       cast(CASE WHEN 收藏人数 in('-', '', 'null')  THEN NULL ELSE 收藏人数 END as integer)  收藏人数,
+       cast(CASE WHEN 加购人数 in('-', '', 'null')  THEN NULL ELSE 加购人数 END as integer) 加购人数,
+       cast(CASE WHEN 下单买家数 in('-', '', 'null')  THEN NULL ELSE 下单买家数 END as integer)  下单买家数,
+       CAST(CAST(split_part(CASE WHEN 下单转化率 in('-', '', 'null')  THEN NULL ELSE 下单转化率 END, '%', 1) AS DECIMAL(10, 2)) /100 AS DECIMAL(10, 4)) 下单转化率,
+       cast(CASE WHEN 支付件数 in('-', '', 'null')  THEN NULL ELSE 支付件数 END AS integer) 支付件数,
+       cast(CASE WHEN 支付买家数 in('-', '', 'null')  THEN NULL ELSE 支付买家数 END AS integer) 支付买家数,
+       CAST(CAST(split_part(CASE WHEN 支付转化率 in('-', '', 'null')  THEN NULL ELSE 支付转化率 END, '%', 1) AS DECIMAL(10, 2)) /100 AS DECIMAL(10, 4)) 支付转化率,
+       cast(CASE WHEN 直接支付买家数 in('-', '', 'null')  THEN NULL ELSE 直接支付买家数 END AS integer) 直接支付买家数,
+       cast(CASE WHEN "收藏商品-支付买家数" in('-', '', 'null')  THEN NULL ELSE "收藏商品-支付买家数" END AS integer) "收藏商品-支付买家数",
+       cast(CASE WHEN 粉丝支付买家数 in('-', '', 'null')  THEN NULL ELSE 粉丝支付买家数 END AS integer) 粉丝支付买家数,
+       cast(CASE WHEN "加购商品-支付买家数" in('-', '', 'null')  THEN NULL ELSE "加购商品-支付买家数" END AS integer) "加购商品-支付买家数",
+       case when 访问来源 in('-', '', 'null')  then null else 访问来源 end 访问来源,
+       cast(统计日期 AS date) 统计日期,
+       "商品id",
+       date(数据入库日期) 数据入库日期
+  FROM  "财务_淘系_生参_商品流量_单品_流量来源_pc端"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+ --dwd_财务_淘系_生参_商品流量_单品_无线端
+ CREATE TABLE  if not exists public."dwd_财务_淘系_生参_商品流量_单品_无线端" (
+    流量来源 character varying(255)  NULL,
+    来源明细 character varying  NULL,
+    访客数 integer  NULL,
+    浏览量 integer  NULL,
+    支付金额 numeric(10,2)  NULL,
+    浏览量占比 numeric(10,4)  NULL,
+    店内跳转人数 integer  NULL,
+    跳出本店人数 integer  NULL,
+    收藏人数 integer  NULL,
+    加购人数 integer  NULL,
+    下单买家数 integer  NULL,
+    下单转化率 numeric(10,4)  NULL,
+    支付件数 integer  NULL,
+    支付买家数 integer  NULL,
+    支付转化率 numeric(10,4)  NULL,
+    直接支付买家数 integer  NULL,
+    "收藏商品-支付买家数" integer  NULL,
+    粉丝支付买家数 integer  NULL,
+    "加购商品-支付买家数" integer  NULL,
+    访问来源 character varying  NULL,
+    统计日期 date  NULL,
+    商品id character varying(255)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_生参_商品流量_单品_无线端" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_生参_商品流量_单品_无线端"
+SELECT  流量来源,
+       case when 来源明细 in('-', '', 'null')  then null else 来源明细 end 来源明细,
+       cast(CASE WHEN 访客数 in('-', '', 'null')  THEN NULL ELSE 访客数 END as integer) 访客数,
+       cast(CASE WHEN 浏览量 in('-', '', 'null')  THEN NULL ELSE 浏览量 END as integer) 浏览量,
+       cast((CASE WHEN 支付金额 in('-', '', 'null')  THEN NULL ELSE 支付金额 END) as DECIMAL(10, 2)) 支付金额,
+       CAST(CAST(split_part(CASE WHEN 浏览量占比 in('-', '', 'null')  THEN NULL ELSE 浏览量占比 END, '%', 1) AS DECIMAL(10, 2)) /100 AS DECIMAL(10, 4)) 浏览量占比,
+       cast(CASE WHEN 店内跳转人数 in('-', '', 'null')  THEN NULL ELSE 店内跳转人数 END as integer)  店内跳转人数,
+       cast(CASE WHEN 跳出本店人数 in('-', '', 'null')  THEN NULL ELSE 跳出本店人数 END as integer)  跳出本店人数,
+       cast(CASE WHEN 收藏人数 in('-', '', 'null')  THEN NULL ELSE 收藏人数 END as integer)  收藏人数,
+       cast(CASE WHEN 加购人数 in('-', '', 'null')  THEN NULL ELSE 加购人数 END as integer) 加购人数,
+       cast(CASE WHEN 下单买家数 in('-', '', 'null')  THEN NULL ELSE 下单买家数 END as integer)  下单买家数,
+       CAST(CAST(split_part(CASE WHEN 下单转化率 in('-', '', 'null')  THEN NULL ELSE 下单转化率 END, '%', 1) AS DECIMAL(10, 2)) /100 AS DECIMAL(10, 4)) 下单转化率,
+       cast(CASE WHEN 支付件数 in('-', '', 'null')  THEN NULL ELSE 支付件数 END AS integer) 支付件数,
+       cast(CASE WHEN 支付买家数 in('-', '', 'null')  THEN NULL ELSE 支付买家数 END AS integer) 支付买家数,
+       CAST(CAST(split_part(CASE WHEN 支付转化率 in('-', '', 'null')  THEN NULL ELSE 支付转化率 END, '%', 1) AS DECIMAL(10, 2)) /100 AS DECIMAL(10, 4)) 支付转化率,
+       cast(CASE WHEN 直接支付买家数 in('-', '', 'null')  THEN NULL ELSE 直接支付买家数 END AS integer) 直接支付买家数,
+       cast(CASE WHEN "收藏商品-支付买家数" in('-', '', 'null')  THEN NULL ELSE "收藏商品-支付买家数" END AS integer) "收藏商品-支付买家数",
+       cast(CASE WHEN 粉丝支付买家数 in('-', '', 'null')  THEN NULL ELSE 粉丝支付买家数 END AS integer) 粉丝支付买家数,
+       cast(CASE WHEN "加购商品-支付买家数" in('-', '', 'null')  THEN NULL ELSE "加购商品-支付买家数" END AS integer) "加购商品-支付买家数",
+       case when 访问来源 in('-', '', 'null')  then null else 访问来源 end 访问来源,
+       cast(统计日期 AS date) 统计日期,
+       "商品id",
+       date(数据入库日期) 数据入库日期
+  FROM  "财务_淘系_生参_商品流量_单品_流量来源_无线端"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+--dwd_财务_淘系_热浪联盟_商品报表
+CREATE TABLE if not exists public."dwd_财务_淘系_热浪联盟_商品报表" (
+    商品名称 character varying(200)  NULL,
+    商品id character varying(200)  NULL,
+    "付款佣金支出(元)" numeric(10,2)  NULL,
+    付款佣金率 numeric(10,4)  NULL,
+    "确认收货佣金支出(元)" numeric(10,2)  NULL,
+    确认收货佣金率 numeric(10,4)  NULL,
+    商品点击次数 integer  NULL,
+    商品点击人数 integer  NULL,
+    推广主播数 integer  NULL,
+    付款人数 integer  NULL,
+    付款笔数 integer  NULL,
+    "付款金额(元)" numeric(10,2)  NULL,
+    付款转化率 numeric(10,4)  NULL,
+    确认收货人数 integer  NULL,
+    确认收货笔数 integer  NULL,
+    "确认收货金额(元)" numeric(10,2)  NULL,
+    预估预售整单佣金 numeric(10,2)  NULL,
+    预估预售整单佣金率 numeric(10,2)  NULL,
+    预售定金笔数 numeric(10,2)  NULL,
+    "预售定金金额(元)" numeric(10,2)  NULL,
+    "预估预售尾款金额(元)" numeric(10,2)  NULL,
+    "预估预售整单金额(元)" numeric(10,2)  NULL,
+    付款服务费支出 numeric(10,2)  NULL,
+    确认收货服务费支出 numeric(10,2)  NULL,
+    统计日期 date  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_热浪联盟_商品报表" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_热浪联盟_商品报表"	
+select  商品名称,
+       商品id,
+       cast(case when"付款佣金支出(元)" in ('', '-')  then null else "付款佣金支出(元)" end as decimal(10, 2)) "付款佣金支出(元)",
+       cast(case when 付款佣金率 in ('', '-')  then null else  付款佣金率 end as decimal(10, 4))  付款佣金率,
+       cast(case when"确认收货佣金支出(元)" in ('', '-')  then null else "确认收货佣金支出(元)" end as decimal(10, 2)) "确认收货佣金支出(元)",
+       cast(case when 确认收货佣金率 in ('', '-')  then null else  确认收货佣金率 end as decimal(10, 4)) 确认收货佣金率,
+       cast(case when 商品点击次数 in ('', '-')  then null else 商品点击次数 end as integer) 商品点击次数,
+       cast(case when 商品点击人数 in ('', '-')  then null else 商品点击人数 end as integer) 商品点击人数,
+       cast(case when 推广主播数 in ('', '-')  then null else 推广主播数 end as integer) 推广主播数,
+       cast(case when 付款人数 in ('', '-')  then null else 付款人数 end as integer) 付款人数,
+       cast(case when 付款笔数 in ('', '-')  then null else 付款笔数 end as integer) 付款笔数,
+       cast(case when "付款金额(元)" in ('', '-')  then null else "付款金额(元)" end as decimal(10, 2)) "付款金额(元)",
+       cast(case when 付款转化率 in ('', '-')  then null else 付款转化率 end as decimal(10, 4)) 付款转化率,
+       cast(case when 确认收货人数 in ('', '-')  then null else 确认收货人数 end as  integer)  确认收货人数,
+       cast(case when 确认收货笔数 in ('', '-')  then null else 确认收货笔数 end  as integer)  确认收货笔数,
+       cast(case when "确认收货金额(元)" in ('', '-')  then null else "确认收货金额(元)" end as decimal(10, 2)) "确认收货金额(元)",
+       cast(case when 预估预售整单佣金 in ('', '-')  then null else 预估预售整单佣金 end as decimal(10, 2))  预估预售整单佣金,
+       cast(case when 预估预售整单佣金率 in ('', '-')  then null else 预估预售整单佣金率 end as decimal(10, 2)) 预估预售整单佣金率,
+       cast(case when 预售定金笔数 in ('', '-')  then null else 预售定金笔数 end as decimal(10, 2)) 预售定金笔数,
+       cast(case when "预售定金金额(元)" in ('', '-')  then null else "预售定金金额(元)" end as decimal(10, 2)) "预售定金金额(元)",
+       cast(case when "预估预售尾款金额(元)" in ('', '-')  then null else "预估预售尾款金额(元)" end as decimal(10, 2)) "预估预售尾款金额(元)",
+       cast(case when "预估预售整单金额(元)" in ('', '-')  then null else "预估预售整单金额(元)" end as decimal(10, 2)) "预估预售整单金额(元)",
+       cast(case when 付款服务费支出 in ('', '-')  then null else 付款服务费支出 end as decimal(10, 2))  付款服务费支出,
+       cast(case when 确认收货服务费支出 in ('', '-')  then null else 确认收货服务费支出 end as decimal(10, 2))  确认收货服务费支出,
+       date(统计日期)  统计日期,
+       date(数据入库日期) 数据入库日期
+  from "财务_淘系_热浪联盟_商品报表"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1) ; 
+--dwd_财务_淘系_直通车_单元
+CREATE TABLE  if not exists public."dwd_财务_淘系_直通车_单元" (
+    统计日期 date  NULL,
+    计划id character varying(200)  NULL,
+    计划名称 character varying(200)  NULL,
+    推广类型 character varying(200)  NULL,
+    单元id character varying(200)  NULL,
+    单元名称 character varying(200)  NULL,
+    商品id character varying(200)  NULL,
+    展现量 integer  NULL,
+    点击量 integer  NULL,
+    花费 numeric(10,2)  NULL,
+    点击率 numeric(10,4)  NULL,
+    平均点击花费 numeric(10,2)  NULL,
+    千次展现花费 numeric(10,2)  NULL,
+    总收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    总购物车数 integer  NULL,
+    直接购物车数 integer  NULL,
+    间接购物车数 integer  NULL,
+    加购成本 numeric(10,2)  NULL,
+    宝贝收藏成本 numeric(10,2)  NULL,
+    宝贝收藏转化率 numeric(10,4)  NULL,
+    加购率 numeric(10,4)  NULL,
+    总预售成交金额 numeric(10,2)  NULL,
+    总预售成交笔数 integer  NULL,
+    直接预售成交金额 numeric(10,2)  NULL,
+    直接预售成交笔数 integer  NULL,
+    间接预售成交金额 numeric(10,2)  NULL,
+    间接预售成交笔数 integer  NULL,
+    总成交金额 numeric(10,2)  NULL,
+    直接成交金额 numeric(10,2)  NULL,
+    间接成交金额 numeric(10,2)  NULL,
+    总成交笔数 integer  NULL,
+    直接成交笔数 integer  NULL,
+    间接成交笔数 integer  NULL,
+    投入产出比 numeric(10,2)  NULL,
+    点击转化率 numeric(10,4)  NULL,
+    直接点击转化率 numeric(10,4)  NULL,
+    购物金充值笔数 integer  NULL,
+    购物金充值金额 numeric(10,2)  NULL,
+    自然流量曝光 integer  NULL,
+    自然流量转化金额 numeric(10,2)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_直通车_单元" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_直通车_单元"	
+SELECT  cast(日期 as date)  统计日期,
+       计划id,
+       计划名称,
+       推广类型,
+       单元id,
+       单元名称,
+       "商品id",
+       cast(CASE 展现量 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 展现量 END AS integer)  AS 展现量,
+       cast(CASE 点击量 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 点击量 END AS integer)  AS 点击量,
+       cast(CASE 花费 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 花费 END AS DECIMAL(10, 2))  AS 花费,
+       cast(CASE 点击率 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 点击率 end as decimal(10, 4))  as 点击率,
+       cast(CASE 平均点击花费 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 平均点击花费 END AS DECIMAL(10, 2))  AS 平均点击花费,
+       cast(CASE 千次展现花费 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 千次展现花费 END AS DECIMAL(10, 2))  AS 千次展现花费,
+       cast(总收藏数 as integer) 总收藏数,
+       CAST(split_part(CASE WHEN 宝贝收藏数= '' THEN NULL ELSE 宝贝收藏数 END, '.', 1) AS integer) 宝贝收藏数,
+       CAST(split_part(CASE WHEN 店铺收藏数= '' THEN NULL ELSE 店铺收藏数 END, '.', 1) AS integer) 店铺收藏数,
+       cast(case when 总购物车数= '' then null else 总购物车数 end as integer)  总购物车数,
+       CAST(split_part(CASE WHEN 直接购物车数= '' THEN NULL ELSE 直接购物车数 END, '.', 1) AS integer) 直接购物车数,
+       CAST(split_part(CASE WHEN 间接购物车数= '' THEN NULL ELSE 间接购物车数 END, '.', 1) AS integer) 间接购物车数,
+       cast(case when 加购成本= '' then null else 加购成本 end as decimal(10, 2)) as 加购成本,
+       cast(case when 宝贝收藏成本= '' then null else 宝贝收藏成本 end as decimal(10, 2)) 宝贝收藏成本,
+       CAST(CASE WHEN 宝贝收藏转化率= '' then null else 宝贝收藏转化率 END AS DECIMAL(10, 4)) 宝贝收藏转化率,
+       CAST(case when 加购率= '' then null else 加购率 end AS decimal(10, 4))  加购率,
+       cast(case when 总预售成交金额= '' then null else 总预售成交金额 end as decimal(10, 2))  总预售成交金额,
+       cast(case when 总预售成交笔数= '' then null else 总预售成交笔数 end as integer)  总预售成交笔数,
+       cast(CASE 直接预售成交金额 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 直接预售成交金额 END AS DECIMAL(10, 2))  AS 直接预售成交金额,
+       CAST(split_part(CASE WHEN 直接预售成交笔数= '' THEN NULL ELSE 直接预售成交笔数 END, '.', 1) AS integer) 直接预售成交笔数,
+       cast(CASE 间接预售成交金额 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 间接预售成交金额 END AS DECIMAL(10, 2))  AS 间接预售成交金额,
+       CAST(split_part(CASE WHEN 间接预售成交笔数= '' THEN NULL ELSE 间接预售成交笔数 END, '.', 1) AS integer) 间接预售成交笔数,
+       cast(case when 总成交金额= '' then null else 总成交金额 end as decimal(10, 2)) 总成交金额,
+       cast(CASE 直接成交金额 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 直接成交金额 END AS DECIMAL(10, 2))  AS 直接成交金额,
+       cast(CASE 间接成交金额 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 间接成交金额 END AS DECIMAL(10, 2))  AS 间接成交金额,
+       cast(case when 总成交笔数= '' then null else 总成交笔数 end as integer)  总成交笔数,
+       CAST(split_part(CASE WHEN 直接成交笔数= '' THEN NULL ELSE 直接成交笔数 END, '.', 1) AS integer) 直接成交笔数,
+       CAST(split_part(CASE WHEN 间接成交笔数= '' THEN NULL ELSE 间接成交笔数 END, '.', 1) AS integer) 间接成交笔数,
+       cast(case when 投入产出比= '' then null else 投入产出比 end as decimal(10, 2))  投入产出比,
+       cast(case when 点击转化率= '' then null else 点击转化率 end as decimal(10, 4))  点击转化率,
+       cast(case when 直接点击转化率= '' then null else 直接点击转化率 end as decimal(10, 4))  直接点击转化率,
+       cast(case when 购物金充值笔数= '' then null else 购物金充值笔数 end as integer) 购物金充值笔数,
+       cast(case when 购物金充值金额= '' then 购物金充值金额 end as decimal(10, 2)) 购物金充值金额,
+       CAST(split_part(CASE WHEN 自然流量曝光= '' THEN NULL ELSE 自然流量曝光 END, '.', 1) AS integer) 自然流量曝光,
+       cast(CASE 自然流量转化金额 WHEN '' THEN NULL WHEN '-' THEN NULL WHEN 'null' THEN NULL ELSE 自然流量转化金额 END AS DECIMAL(10, 2))  AS 自然流量转化金额,
+       cast(数据入库日期 as date) 数据入库日期
+  FROM  "财务_淘系_直通车_单元"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1) ;
+--dwd_财务_淘系_引力魔方_推荐_创意
+CREATE TABLE  if not exists public."dwd_财务_淘系_引力魔方_推荐_创意" (
+    日期 date  NULL,
+    计划组 character varying  NULL,
+    计划 character varying  NULL,
+    主体类型 character varying  NULL,
+    主体名称 character varying  NULL,
+    商品id character varying(200)  NULL,
+    创意名称 character varying(200)  NULL,
+    创意id character varying(200)  NULL,
+    消耗 numeric(10,5)  NULL,
+    展现量 integer  NULL,
+    点击量 integer  NULL,
+    点击率 numeric(10,5)  NULL,
+    千次展现成本 numeric(10,4)  NULL,
+    点击成本 numeric(10,5)  NULL,
+    引导访问量 integer  NULL,
+    引导访问人数 integer  NULL,
+    引导访问潜客数 integer  NULL,
+    引导访问潜客占比 numeric(10,2)  NULL,
+    引导访问率 numeric(10,5)  NULL,
+    深度访问量 integer  NULL,
+    平均访问页面数 numeric(10,5)  NULL,
+    关注店铺量 integer  NULL,
+    回搜量 integer  NULL,
+    回访量 integer  NULL,
+    回搜成本 numeric(10,5)  NULL,
+    回访成本 numeric(10,5)  NULL,
+    平均深度访问时长 numeric(10,2)  NULL,
+    新客获取量 integer  NULL,
+    拉新率 numeric(10,5)  NULL,
+    拉新消耗 numeric(10,5)  NULL,
+    拉新成本 numeric(10,5)  NULL,
+    收藏宝贝量 integer  NULL,
+    添加购物车量 integer  NULL,
+    拍下订单量 integer  NULL,
+    拍下订单金额 numeric(10,2)  NULL,
+    预售订单量 integer  NULL,
+    预售金额 numeric(10,2)  NULL,
+    加购收藏量 integer  NULL,
+    加购收藏成本 numeric(10,5)  NULL,
+    成交订单量 integer  NULL,
+    成交订单金额 numeric(10,2)  NULL,
+    展现转化率 numeric(10,5)  NULL,
+    点击转化率 numeric(10,5)  NULL,
+    投资回报率 numeric(10,4)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_引力魔方_推荐_创意" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_引力魔方_推荐_创意"	
+select  
+date(日期)  日期,
+       case when 计划组 in ('', '-', 'null') then null else 计划组 end 计划组,
+       case when 计划 in ('', '-', 'null') then null else 计划 end 计划,
+       case when 主体类型 in ('', '-', 'null') then null else 主体类型 end 主体类型,
+       case when 主体名称 in ('', '-', 'null') then null else 主体名称 end 主体名称,
+       商品id,
+       创意名称,
+       创意id,
+       cast(case when 消耗 in ('', '-', 'null') then null else 消耗 end as decimal(10, 5)) 消耗,
+       cast(case when 展现量 in ('', '-', 'null') then null else 展现量 end as integer) 展现量,
+       cast(case when 点击量 in ('', '-', 'null') then null else 点击量 end as integer) 点击量,
+       cast(case when 点击率 in ('', '-', 'null') then null else 点击率 end as decimal(10, 5)) 点击率,
+       cast(case when 千次展现成本 in ('', '-', 'null') then null else 千次展现成本 end as decimal(10, 4))  as 千次展现成本,
+       cast(case when 点击成本 in ('', '-', 'null') then null else 点击成本 end as decimal(10, 5))  as 点击成本,
+       cast(case when 引导访问量 in ('', '-', 'null') then null else 引导访问量 end as integer)  as 引导访问量,
+       cast(case when 引导访问人数 in ('', '-', 'null') then null else 引导访问人数 end as integer) as 引导访问人数,
+       cast(case when 引导访问潜客数 in ('', '-', 'null') then null else 引导访问潜客数 end as integer) as 引导访问潜客数,
+       cast(case when 引导访问潜客占比 in ('', '-', 'null') then null else 引导访问潜客占比 end as decimal(10, 2)) as 引导访问潜客占比,
+       cast(case when 引导访问率 in ('', '-', 'null') then null else 引导访问率 end as decimal(10, 5)) as 引导访问率,
+       cast(case when 深度访问量 in ('', '-', 'null') then null else 深度访问量 end as integer) 深度访问量,
+       cast(case when 平均访问页面数 in ('', '-', 'null') then null else 平均访问页面数 end as decimal(10, 5)) 平均访问页面数,
+       cast(case when 关注店铺量 in ('', '-', 'null') then null else 关注店铺量 end as integer) 关注店铺量,
+       cast(case when 回搜量 in ('', '-', 'null') then null else 回搜量 end as integer) 回搜量,
+       cast(case when 回访量 in ('', '-', 'null') then null else 回访量 end as integer) 回访量,
+       cast(case when 回搜成本 in ('', '-', 'null') then null else 回搜成本 end as decimal(10, 5)) as 回搜成本,
+       cast(case when 回访成本 in ('', '-', 'null') then null else 回访成本 end as decimal(10, 5)) as 回访成本,
+       cast(case when 平均深度访问时长 in ('', '-', 'null') then null else 平均深度访问时长 end as decimal(10, 2)) 平均深度访问时长,
+       cast(case when 新客获取量 in ('', '-', 'null') then null else 新客获取量 end as integer) 新客获取量,
+       cast(case when 拉新率 in ('', '-', 'null') then null else 拉新率 end as decimal(10, 5)) 拉新率,
+       cast(case when 拉新消耗 in ('', '-', 'null') then null else 拉新消耗 end as decimal(10, 5)) 拉新消耗,
+       cast(case when 拉新成本 in ('', '-', 'null') then null else 拉新成本 end as decimal(10, 5)) 拉新成本,
+       cast(case when 收藏宝贝量 in ('', '-', 'null') then null else 收藏宝贝量 end as integer) 收藏宝贝量,
+       cast(case when 添加购物车量 in ('', '-', 'null') then null else 添加购物车量 end as integer) 添加购物车量,
+       cast(case when 拍下订单量 in ('', '-', 'null') then null else 拍下订单量 end as integer) 拍下订单量,
+       cast(case when 拍下订单金额 in ('', '-', 'null') then null else 拍下订单金额 end as decimal(10, 2)) 拍下订单金额,
+       cast(case when 预售订单量 in ('', '-', 'null') then null else 预售订单量 end as integer) 预售订单量,
+       cast(case when 预售金额 in ('', '-', 'null') then null else 预售金额 end as decimal(10, 2)) 预售金额,
+       cast(case when 加购收藏量 in ('', '-', 'null') then null else 加购收藏量 end as integer) 加购收藏量,
+       cast(case when 加购收藏成本 in ('', '-', 'null') then null else 加购收藏成本 end as decimal(10, 5)) 加购收藏成本,
+       cast(case when 成交订单量 in ('', '-', 'null') then null else 成交订单量 end as integer) 成交订单量,
+       cast(case when 成交订单金额 in ('', '-', 'null') then null else 成交订单金额 end as decimal(10, 2)) 成交订单金额,
+       cast(case when 展现转化率 in ('', '-', 'null') then null else 展现转化率 end as decimal(10, 5)) 展现转化率,
+       cast(case when 点击转化率 in ('', '-', 'null') then null else 点击转化率 end as decimal(10, 5)) 点击转化率,
+       cast(case when 投资回报率 in ('', '-', 'null') then null else 投资回报率 end as decimal(10, 4)) 投资回报率,
+       date(数据入库日期) 数据入库日期
+ FROM "财务_淘系_引力魔方_推荐_创意"
+  where 数据入库日期=(
+ select 入库日期
+   from "触发器事件表"
+  order by 创建时间 desc
+  limit 1) ;
+  --dwd_财务_淘系_万相台_创意_货品加速
+  CREATE TABLE if not exists public."dwd_财务_淘系_万相台_创意_货品加速" (
+    日期 date  NULL,
+    效果模型 character varying(200)  NULL,
+    统计口径 character varying(200)  NULL,
+    转化周期 character varying(200)  NULL,
+    创意id character varying(200)  NULL,
+    商品id character varying(200)  NULL,
+    店铺url character varying  NULL,
+    计划id character varying(200)  NULL,
+    计划名称 character varying(200)  NULL,
+    消耗 numeric(10,5)  NULL,
+    曝光量 integer  NULL,
+    点击量 integer  NULL,
+    点击率 numeric(10,4)  NULL,
+    点击成本 numeric(10,5)  NULL,
+    直接加购数 integer  NULL,
+    间接加购数 integer  NULL,
+    总加购量 integer  NULL,
+    收藏量 integer  NULL,
+    加购收藏成本 numeric(10,5)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    直接成交笔数 integer  NULL,
+    间接成交笔数 integer  NULL,
+    总成交笔数 integer  NULL,
+    直接成交金额 numeric(10,2)  NULL,
+    间接成交金额 numeric(10,2)  NULL,
+    总成交金额 numeric(10,2)  NULL,
+    成交转化率 numeric(10,4)  NULL,
+    roi numeric(10,4)  NULL,
+    新客成交金额贡献占比 numeric(10,4)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_万相台_创意_货品加速" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_万相台_创意_货品加速"	
+	select  date(日期)  日期,
+       效果模型,
+       统计口径,
+       转化周期,
+       "创意id",
+       "商品id",
+       case when "店铺url" in('', '-', 'null')  then null else "店铺url" end "店铺url",
+       "计划id",
+       计划名称,
+       cast(case when 消耗 in('', '-', 'null')  then null else 消耗 end as decimal(10, 5))  消耗,
+       cast(case when 曝光量 in('', '-', 'null')  then null else 曝光量 end as integer)  曝光量,
+       cast(case when 点击量 in('', '-', 'null')  then null else 点击量 end as integer)  点击量,
+       cast(case when 点击率 in('', '-', 'null')  then null else 点击率 end as decimal(10, 4))  点击率,
+       cast(case when 点击成本 in('', '-', 'null')  then null else 点击成本 end as decimal(10, 5))  点击成本,
+       cast(case when 直接加购数 in('', '-', 'null')  then null else 直接加购数 end as integer)  直接加购数,
+       cast(case when 间接加购数 in('', '-', 'null')  then null else 间接加购数 end as integer)  间接加购数,
+       cast(case when 总加购量 in('', '-', 'null')  then null else 总加购量 end as integer)  总加购量,
+       cast(case when 收藏量 in('', '-', 'null')  then null else 收藏量 end as integer)  收藏量,
+       cast(case when 加购收藏成本 in('', '-', 'null')  then null else 加购收藏成本 end as decimal(10, 5))  加购收藏成本,
+       cast(case when 预售成交笔数 in('', '-', 'null')  then null else 预售成交笔数 end as integer)  预售成交笔数,
+       cast(case when 预售成交金额 in('', '-', 'null')  then null else 预售成交金额 end as decimal(10, 2))  预售成交金额,
+       cast(case when 直接成交笔数 in('', '-', 'null')  then null else 直接成交笔数 end as integer)  直接成交笔数,
+       cast(case when 间接成交笔数 in('', '-', 'null')  then null else 间接成交笔数 end as integer)  间接成交笔数,
+       cast(case when 总成交笔数 in('', '-', 'null')  then null else 总成交笔数 end as integer)  总成交笔数,
+       cast(case when 直接成交金额 in('', '-', 'null')  then null else 直接成交金额 end as decimal(10, 2))  直接成交金额,
+       cast(case when 间接成交金额 in('', '-', 'null')  then null else 间接成交金额 end as decimal(10, 2))  间接成交金额,
+       cast(case when 总成交金额 in('', '-', 'null')  then null else 总成交金额 end as decimal(10, 2))  总成交金额,
+       cast(case when 成交转化率 in('', '-', 'null')  then null else 成交转化率 end as decimal(10, 4))  成交转化率,
+       cast(case when "roi" in('', '-', 'null')  then null else "roi" end as decimal(10, 4)) "roi",
+       cast(case when 新客成交金额贡献占比 in('', '-', 'null')  then null else 新客成交金额贡献占比 end as
+       decimal(10,4))新客成交金额贡献占比 
+       , date(数据入库日期)  数据入库日期
+  from  "财务_淘系_万相台_创意_货品加速"
+  where 数据入库日期=(
+ select 入库日期
+   from "触发器事件表"
+  order by 创建时间 desc
+  limit 1) ;
+--dwd_财务_淘系_品销宝_明星店铺报表_创意
+CREATE TABLE  if not exists public."dwd_财务_淘系_品销宝_明星店铺报表_创意" (
+    日期 date  NULL,
+    计划名称 character varying(200)  NULL,
+    单元名称 character varying(200)  NULL,
+    创意名称 character varying(200)  NULL,
+    搜索量 integer  NULL,
+    搜索访客数 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    消耗 numeric(10,2)  NULL,
+    触达访客数 integer  NULL,
+    千次展现成本 numeric(10,6)  NULL,
+    点击单价 numeric(10,6)  NULL,
+    跳转点击单价 numeric(10,6)  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    行动访客数 integer  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    回报率 numeric(10,4)  NULL,
+    转化率 numeric(10,4)  NULL,
+    自然流量增量成交 numeric(10,6)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    成交访客数 integer  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_明星店铺报表_创意" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_明星店铺报表_创意"	
+	select  date(日期) 日期,
+       计划名称,
+       单元名称,
+       创意名称,
+       cast(case when 搜索量 in('null', '-', '') then null else 搜索量 end as integer) 搜索量,
+       cast(case when 搜索访客数 in('null', '-', '') then null else 搜索访客数 end as integer) 搜索访客数,
+       cast(case when 展现量 in('null', '-', '') then null else 展现量 end as integer) 展现量,
+       cast(case when 自然流量增量曝光 in('null', '-', '') then null else 自然流量增量曝光 end as integer) 自然流量增量曝光,
+       cast(case when 消耗 in('null', '-', '') then null else 消耗 end as decimal(10, 2)) 消耗,
+       cast(case when 触达访客数 in('null', '-', '') then null else 触达访客数 end as integer) 触达访客数,
+       cast(case when 千次展现成本 in('null', '-', '') then null else 千次展现成本 end as decimal(10, 6)) 千次展现成本,
+       cast(case when 点击单价 in('null', '-', '') then null else 点击单价 end as decimal(10, 6)) 点击单价,
+       cast(case when 跳转点击单价 in('null', '-', '') then null else 跳转点击单价 end as decimal(10, 6)) 跳转点击单价,
+       cast(case when 点击量 in('null', '-', '') then null else 点击量 end as integer) 点击量,
+       cast(case when 跳转点击量 in('null', '-', '') then null else 跳转点击量 end as integer) 跳转点击量,
+       cast(case when 点击访客数 in('null', '-', '') then null else 点击访客数 end as integer) 点击访客数,
+       cast(case when 互动点击量 in('null', '-', '') then null else 互动点击量 end as integer) 互动点击量,
+       cast(case when 点击率 in('null', '-', '') then null else 点击率 end as decimal(10, 6)) 点击率,
+       cast(case when 跳转点击率 in('null', '-', '') then null else 跳转点击率 end as decimal(10, 6)) 跳转点击率,
+       cast(case when 进店访客数 in('null', '-', '') then null else 进店访客数 end as integer) 进店访客数,
+       cast(case when 店铺收藏数 in('null', '-', '') then null else 店铺收藏数 end as integer) 店铺收藏数,
+       cast(case when 宝贝收藏数 in('null', '-', '') then null else 宝贝收藏数 end as integer) 宝贝收藏数,
+       cast(case when 宝贝加购数 in('null', '-', '') then null else 宝贝加购数 end as integer) 宝贝加购数,
+       cast(case when 行动访客数 in('null', '-', '') then null else 行动访客数 end as integer) 行动访客数,
+       cast(case when 店铺收藏访客数 in('null', '-', '') then null else 店铺收藏访客数 end as integer) 店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in('null', '-', '') then null else 宝贝收藏访客数 end as integer) 宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in('null', '-', '') then null else 宝贝加购访客数 end as integer) 宝贝加购访客数,
+       cast(case when 成交笔数 in('null', '-', '') then null else 成交笔数 end as integer) 成交笔数,
+       cast(case when 成交金额 in('null', '-', '') then null else 成交金额 end as decimal(10, 2)) 成交金额,
+       cast(case when 回报率 in('null', '-', '') then null else 回报率 end as decimal(10, 4)) 回报率,
+       cast(case when 转化率 in('null', '-', '') then null else 转化率 end as decimal(10, 4)) 转化率,
+       cast(case when 自然流量增量成交 in('null', '-', '') then null else 自然流量增量成交 end as decimal(10, 6)) 自然流量增量成交,
+       cast(case when 预售成交笔数 in('null', '-', '') then null else 预售成交笔数 end as integer) 预售成交笔数,
+       cast(case when 预售成交金额 in('null', '-', '') then null else 预售成交金额 end as decimal(10, 2)) 预售成交金额,
+       cast(case when 成交访客数 in('null', '-', '') then null else 成交访客数 end as integer) 成交访客数,
+       cast(case when 搜索进店率 in('null', '-', '') then null else 搜索进店率 end as decimal(10, 6)) 搜索进店率,
+       cast(case when 进店行动率 in('null', '-', '') then null else 进店行动率 end as decimal(10, 6)) 进店行动率,
+       cast(case when 行动成交率 in('null', '-', '') then null else 行动成交率 end as decimal(10, 6)) 行动成交率,
+       date(数据入库日期) 数据入库日期
+ FROM "财务_淘系_品销宝_明星店铺报表_创意"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+ --dwd_财务_淘系_品销宝_明星店铺报表_定向人群
+ CREATE TABLE if not exists public."dwd_财务_淘系_品销宝_明星店铺报表_定向人群" (
+    日期 date  NULL,
+    计划名称 character varying  NULL,
+    单元名称 character varying  NULL,
+    创意名称 character varying  NULL,
+    定向人群名称 character varying  NULL,
+    搜索量 integer  NULL,
+    搜索访客数 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    消耗 numeric(10,2)  NULL,
+    触达访客数 integer  NULL,
+    千次展现成本 numeric(10,2)  NULL,
+    点击单价 numeric(10,6)  NULL,
+    跳转点击单价 numeric(10,6)  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    行动访客数 integer  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    回报率 numeric(10,5)  NULL,
+    转化率 numeric(10,5)  NULL,
+    自然流量增量成交 numeric(10,5)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    成交访客数 integer  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_明星店铺报表_定向人群" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_明星店铺报表_定向人群"
+select  date(日期)  日期,
+       case when 计划名称 in('', '-', 'null')  then null else 计划名称 end 计划名称,
+       case when 单元名称 in('', '-', 'null')  then null else 单元名称 end 单元名称,
+       case when 创意名称 in('', '-', 'null')  then null else 创意名称 end 创意名称,
+       case when 定向人群名称 in('', '-', 'null')  then null else 定向人群名称 end 定向人群名称,
+       cast(case when 搜索量 in('', '-', 'null')  then null else 搜索量 end as integer) 搜索量,
+       cast(case when 搜索访客数 in('', '-', 'null')  then null else 搜索访客数 end as integer) 搜索访客数,
+       cast(case when 展现量 in('', '-', 'null')  then null else 展现量 end as integer) 展现量,
+       cast(case when 自然流量增量曝光 in('', '-', 'null')  then null else 自然流量增量曝光 end as integer) 自然流量增量曝光,
+       cast(case when 消耗 in('', '-', 'null')  then null else 消耗 end as decimal(10, 2)) 消耗,
+       cast(case when 触达访客数 in('', '-', 'null')  then null else 触达访客数 end as integer) 触达访客数,
+       cast(case when 千次展现成本 in('', '-', 'null')  then null else 千次展现成本 end as decimal(10, 2)) 千次展现成本,
+       cast(case when 点击单价 in('', '-', 'null')  then null else 点击单价 end as decimal(10, 6)) 点击单价,
+       cast(case when 跳转点击单价 in('', '-', 'null')  then null else 跳转点击单价 end as decimal(10, 6)) 跳转点击单价,
+       cast(case when 点击量 in('', '-', 'null')  then null else 点击量 end as integer) 点击量,
+       cast(case when 跳转点击量 in('', '-', 'null')  then null else 跳转点击量 end as integer) 跳转点击量,
+       cast(case when 点击访客数 in('', '-', 'null')  then null else 点击访客数 end as integer) 点击访客数,
+       cast(case when 互动点击量 in('', '-', 'null')  then null else 互动点击量 end as integer) 互动点击量,
+       cast(case when 点击率 in('', '-', 'null')  then null else 点击率 end as decimal(10, 6)) 点击率,
+       cast(case when 跳转点击率 in('', '-', 'null')  then null else 跳转点击率 end as decimal(10, 6)) 跳转点击率,
+       cast(case when 进店访客数 in('', '-', 'null')  then null else 进店访客数 end as integer) 进店访客数,
+       cast(case when 店铺收藏数 in('', '-', 'null')  then null else 店铺收藏数 end as integer) 店铺收藏数,
+       cast(case when 宝贝收藏数 in('', '-', 'null')  then null else 宝贝收藏数 end as integer) 宝贝收藏数,
+       cast(case when 宝贝加购数 in('', '-', 'null')  then null else 宝贝加购数 end as integer) 宝贝加购数,
+       cast(case when 行动访客数 in('', '-', 'null')  then null else 行动访客数 end as integer) 行动访客数,
+       cast(case when 店铺收藏访客数 in('', '-', 'null')  then null else 店铺收藏访客数 end as integer) 店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in('', '-', 'null')  then null else 宝贝收藏访客数 end as integer) 宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in('', '-', 'null')  then null else 宝贝加购访客数 end as integer) 宝贝加购访客数,
+       cast(case when 成交笔数 in('', '-', 'null')  then null else 成交笔数 end as integer) 成交笔数,
+       cast(case when 成交金额 in('', '-', 'null')  then null else 成交金额 end as decimal(10, 2)) 成交金额,
+       cast(case when 回报率 in('', '-', 'null')  then null else 回报率 end as decimal(10, 5)) 回报率,
+       cast(case when 转化率 in('', '-', 'null')  then null else 转化率 end as decimal(10, 5)) 转化率,
+       cast(case when 自然流量增量成交 in('', '-', 'null')  then null else 自然流量增量成交 end as decimal(10, 5)) 自然流量增量成交,
+       cast(case when 预售成交笔数 in('', '-', 'null')  then null else 预售成交笔数 end as integer) 预售成交笔数,
+       cast(case when 预售成交金额 in('', '-', 'null')  then null else 预售成交金额 end as decimal(10, 2)) 预售成交金额,
+       cast(case when 成交访客数 in('', '-', 'null')  then null else 成交访客数 end as integer) 成交访客数,
+       cast(case when 搜索进店率 in('', '-', 'null')  then null else 搜索进店率 end as decimal(10, 6)) 搜索进店率,
+       cast(case when 进店行动率 in('', '-', 'null')  then null else 进店行动率 end as decimal(10, 6)) 进店行动率,
+       cast(case when 行动成交率 in('', '-', 'null')  then null else 行动成交率 end as decimal(10, 6)) 行动成交率,
+       date(数据入库日期)  数据入库日期
+  from "财务_淘系_品销宝_明星店铺报表_定向人群"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+ 
+ --dwd_财务_淘系_品销宝_明星店铺报表_品牌流量包
+ CREATE TABLE if not exists  public."dwd_财务_淘系_品销宝_明星店铺报表_品牌流量包" (
+    日期 date  NULL,
+    计划名称 character varying  NULL,
+    单元名称 character varying  NULL,
+    词包名称 character varying  NULL,
+    搜索量 integer  NULL,
+    搜索访客数 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    消耗 numeric(10,2)  NULL,
+    触达访客数 integer  NULL,
+    千次展现成本 numeric(10,3)  NULL,
+    点击单价 numeric(10,6)  NULL,
+    跳转点击单价 numeric(10,6)  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    行动访客数 integer  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    回报率 numeric(10,2)  NULL,
+    转化率 numeric(10,6)  NULL,
+    自然流量增量成交 numeric(10,5)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    成交访客数 integer  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_明星店铺报表_品牌流量包" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_明星店铺报表_品牌流量包"
+select  date(日期) 日期,
+       case when 计划名称 in ('', '-', 'null') then null else 计划名称 end 计划名称,
+       case when 单元名称 in ('', '-', 'null') then null else 单元名称 end 单元名称,
+       case when 词包名称 in ('', '-', 'null') then null else 词包名称 end 词包名称,
+       cast(case when 搜索量 in ('', '-', 'null') then null else 搜索量 end as integer)  搜索量,
+       cast(case when 搜索访客数 in ('', '-', 'null') then null else 搜索访客数 end as integer)  搜索访客数,
+       cast(case when 展现量 in ('', '-', 'null') then null else 展现量 end as integer)  展现量,
+       cast(case when 自然流量增量曝光 in ('', '-', 'null') then null else 自然流量增量曝光 end as integer)  自然流量增量曝光,
+       cast(case when 消耗 in ('', '-', 'null') then null else 消耗 end as decimal(10, 2))  消耗,
+       cast(case when 触达访客数 in ('', '-', 'null') then null else 触达访客数 end as integer)  触达访客数,
+       cast(case when 千次展现成本 in ('', '-', 'null') then null else 千次展现成本 end as decimal(10, 3))  千次展现成本,
+       cast(case when 点击单价 in ('', '-', 'null') then null else 点击单价 end as decimal(10, 6))  点击单价,
+       cast(case when 跳转点击单价 in ('', '-', 'null') then null else 跳转点击单价 end as decimal(10, 6))  跳转点击单价,
+       cast(case when 点击量 in ('', '-', 'null') then null else 点击量 end as integer)  点击量,
+       cast(case when 跳转点击量 in ('', '-', 'null') then null else 跳转点击量 end as integer)  跳转点击量,
+       cast(case when 点击访客数 in ('', '-', 'null') then null else 点击访客数 end as integer)  点击访客数,
+       cast(case when 互动点击量 in ('', '-', 'null') then null else 互动点击量 end as integer)  互动点击量,
+       cast(case when 点击率 in ('', '-', 'null') then null else 点击率 end as decimal(10, 6))  点击率,
+       cast(case when 跳转点击率 in ('', '-', 'null') then null else 跳转点击率 end as decimal(10, 6))  跳转点击率,
+       cast(case when 进店访客数 in ('', '-', 'null') then null else 进店访客数 end as integer)  进店访客数,
+       cast(case when 店铺收藏数 in ('', '-', 'null') then null else 店铺收藏数 end as integer)  店铺收藏数,
+       cast(case when 宝贝收藏数 in ('', '-', 'null') then null else 宝贝收藏数 end as integer)  宝贝收藏数,
+       cast(case when 宝贝加购数 in ('', '-', 'null') then null else 宝贝加购数 end as integer)  宝贝加购数,
+       cast(case when 行动访客数 in ('', '-', 'null') then null else 行动访客数 end as integer)  行动访客数,
+       cast(case when 店铺收藏访客数 in ('', '-', 'null') then null else 店铺收藏访客数 end as integer)  店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in ('', '-', 'null') then null else 宝贝收藏访客数 end as integer)  宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in ('', '-', 'null') then null else 宝贝加购访客数 end as integer)  宝贝加购访客数,
+       cast(case when 成交笔数 in ('', '-', 'null') then null else 成交笔数 end as integer)  成交笔数,
+       cast(case when 成交金额 in ('', '-', 'null') then null else 成交金额 end as decimal(10, 2))  成交金额,
+       cast(case when 回报率 in ('', '-', 'null') then null else 回报率 end as decimal(10, 2))  回报率,
+       cast(case when 转化率 in ('', '-', 'null') then null else 转化率 end as decimal(10, 6))  转化率,
+       cast(case when 自然流量增量成交 in ('', '-', 'null') then null else 自然流量增量成交 end as decimal(10, 5))  自然流量增量成交,
+       cast(case when 预售成交笔数 in ('', '-', 'null') then null else 预售成交笔数 end as integer)  预售成交笔数,
+       cast(case when 预售成交金额 in ('', '-', 'null') then null else 预售成交金额 end as decimal(10, 2))  预售成交金额,
+       cast(case when 成交访客数 in ('', '-', 'null') then null else 成交访客数 end as integer)  成交访客数,
+       cast(case when 搜索进店率 in ('', '-', 'null') then null else 搜索进店率 end as decimal(10, 6))  搜索进店率,
+       cast(case when 进店行动率 in ('', '-', 'null') then null else 进店行动率 end as decimal(10, 6))  进店行动率,
+       cast(case when 行动成交率 in ('', '-', 'null') then null else 行动成交率 end as decimal(10, 6))  行动成交率,
+       date(数据入库日期) 数据入库日期
+ FROM "财务_淘系_品销宝_明星店铺报表_品牌流量包"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);	
+ --dwd_财务_淘系_品销宝_明星店铺报表_推广单元
+ CREATE TABLE  if not exists public."dwd_财务_淘系_品销宝_明星店铺报表_推广单元" (
+    日期 date  NULL,
+    计划名称 character varying  NULL,
+    单元名称 character varying  NULL,
+    搜索量 integer  NULL,
+    搜索访客数 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    消耗 numeric(10,2)  NULL,
+    触达访客数 integer  NULL,
+    千次展现成本 numeric(10,6)  NULL,
+    点击单价 numeric(10,5)  NULL,
+    跳转点击单价 numeric(10,5)  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    行动访客数 integer  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    回报率 numeric(10,2)  NULL,
+    转化率 numeric(10,6)  NULL,
+    自然流量增量成交 numeric(10,6)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    成交访客数 integer  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_明星店铺报表_推广单元" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_明星店铺报表_推广单元"
+	select  date(日期) 日期,
+       case when 计划名称 in('', '-', 'null')  then null else 计划名称 end 计划名称,
+       case when 单元名称 in('', '-', 'null')  then null else 单元名称 end 单元名称,
+       cast(case when 搜索量 in('', '-', 'null')  then null else 搜索量 end as integer) 搜索量,
+       cast(case when 搜索访客数 in('', '-', 'null')  then null else 搜索访客数 end as integer) 搜索访客数,
+       cast(case when 展现量 in('', '-', 'null')  then null else 展现量 end as integer) 展现量,
+       cast(case when 自然流量增量曝光 in('', '-', 'null')  then null else 自然流量增量曝光 end as integer) 自然流量增量曝光,
+       cast(case when 消耗 in('', '-', 'null')  then null else 消耗 end as decimal(10, 2)) 消耗,
+       cast(case when 触达访客数 in('', '-', 'null')  then null else 触达访客数 end as integer) 触达访客数,
+       cast(case when 千次展现成本 in('', '-', 'null')  then null else 千次展现成本 end as decimal(10, 6)) 千次展现成本,
+       cast(case when 点击单价 in('', '-', 'null')  then null else 点击单价 end as decimal(10, 5)) 点击单价,
+       cast(case when 跳转点击单价 in('', '-', 'null')  then null else 跳转点击单价 end as decimal(10, 5)) 跳转点击单价,
+       cast(case when 点击量 in('', '-', 'null')  then null else 点击量 end as integer) 点击量,
+       cast(case when 跳转点击量 in('', '-', 'null')  then null else 跳转点击量 end as integer) 跳转点击量,
+       cast(case when 点击访客数 in('', '-', 'null')  then null else 点击访客数 end as integer) 点击访客数,
+       cast(case when 互动点击量 in('', '-', 'null')  then null else 互动点击量 end as integer) 互动点击量,
+       cast(case when 点击率 in('', '-', 'null')  then null else 点击率 end as decimal(10, 6)) 点击率,
+       cast(case when 跳转点击率 in('', '-', 'null')  then null else 跳转点击率 end as decimal(10, 6)) 跳转点击率,
+       cast(case when 进店访客数 in('', '-', 'null')  then null else 进店访客数 end as integer) 进店访客数,
+       cast(case when 店铺收藏数 in('', '-', 'null')  then null else 店铺收藏数 end as integer) 店铺收藏数,
+       cast(case when 宝贝收藏数 in('', '-', 'null')  then null else 宝贝收藏数 end as integer) 宝贝收藏数,
+       cast(case when 宝贝加购数 in('', '-', 'null')  then null else 宝贝加购数 end as integer) 宝贝加购数,
+       cast(case when 行动访客数 in('', '-', 'null')  then null else 行动访客数 end as integer) 行动访客数,
+       cast(case when 店铺收藏访客数 in('', '-', 'null')  then null else 店铺收藏访客数 end as integer) 店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in('', '-', 'null')  then null else 宝贝收藏访客数 end as integer) 宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in('', '-', 'null')  then null else 宝贝加购访客数 end as integer) 宝贝加购访客数,
+       cast(case when 成交笔数 in('', '-', 'null')  then null else 成交笔数 end as integer) 成交笔数,
+       cast(case when 成交金额 in('', '-', 'null')  then null else 成交金额 end as decimal(10, 2)) 成交金额,
+       cast(case when 回报率 in('', '-', 'null')  then null else 回报率 end as decimal(10, 2)) 回报率,
+       cast(case when 转化率 in('', '-', 'null')  then null else 转化率 end as decimal(10, 6)) 转化率,
+       cast(case when 自然流量增量成交 in('', '-', 'null')  then null else 自然流量增量成交 end as decimal(10, 6)) 自然流量增量成交,
+       cast(case when 预售成交笔数 in('', '-', 'null')  then null else 预售成交笔数 end as integer) 预售成交笔数,
+       cast(case when 预售成交金额 in('', '-', 'null')  then null else 预售成交金额 end as decimal(10, 2)) 预售成交金额,
+       cast(case when 成交访客数 in('', '-', 'null')  then null else 成交访客数 end as integer) 成交访客数,
+       cast(case when 搜索进店率 in('', '-', 'null')  then null else 搜索进店率 end as decimal(10, 6)) 搜索进店率,
+       cast(case when 进店行动率 in('', '-', 'null')  then null else 进店行动率 end as decimal(10, 6)) 进店行动率,
+       cast(case when 行动成交率 in('', '-', 'null')  then null else 行动成交率 end as decimal(10, 6)) 行动成交率,
+       date(数据入库日期) 数据入库日期
+ FROM "财务_淘系_品销宝_明星店铺报表_推广单元"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1); 
+ --dwd_财务_淘系_品销宝_明星店铺报表_推广计划
+ CREATE TABLE  if not exists public.dwd_财务_淘系_品销宝_明星店铺报表_推广计划 (
+    日期 date  NULL,
+    计划名称 character varying  NULL,
+    搜索量 integer  NULL,
+    搜索访客数 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    消耗 numeric(10,2)  NULL,
+    触达访客数 integer  NULL,
+    千次展现成本 numeric(10,6)  NULL,
+    点击单价 numeric(10,5)  NULL,
+    跳转点击单价 numeric(10,5)  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    行动访客数 integer  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    回报率 numeric(10,2)  NULL,
+    转化率 numeric(10,6)  NULL,
+    自然流量增量成交 numeric(10,6)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    成交访客数 integer  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_明星店铺报表_推广计划" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_明星店铺报表_推广计划"
+select  date(日期) 日期,
+       case when 计划名称 in ('', '-', 'null') then null else 计划名称 end 计划名称,
+       cast(case when 搜索量 in ('', '-', 'null') then null else 搜索量 end as integer)  搜索量,
+       cast(case when 搜索访客数 in ('', '-', 'null') then null else 搜索访客数 end as integer) 搜索访客数,
+       cast(case when 展现量 in ('', '-', 'null') then null else 展现量 end as integer)  展现量,
+       cast(case when 自然流量增量曝光 in ('', '-', 'null') then null else 自然流量增量曝光 end as integer)  自然流量增量曝光,
+       cast(case when 消耗 in ('', '-', 'null') then null else 消耗 end as decimal(10, 2))  消耗,
+       cast(case when 触达访客数 in ('', '-', 'null') then null else 触达访客数 end as integer)  触达访客数,
+       cast(case when 千次展现成本 in ('', '-', 'null') then null else 千次展现成本 end as decimal(10, 6))  千次展现成本,
+       cast(case when 点击单价 in ('', '-', 'null') then null else 点击单价 end as decimal(10, 5))  点击单价,
+       cast(case when 跳转点击单价 in ('', '-', 'null') then null else 跳转点击单价 end as decimal(10, 5))  跳转点击单价,
+       cast(case when 点击量 in ('', '-', 'null') then null else 点击量 end as integer)  点击量,
+       cast(case when 跳转点击量 in ('', '-', 'null') then null else 跳转点击量 end as integer)  跳转点击量,
+       cast(case when 点击访客数 in ('', '-', 'null') then null else 点击访客数 end as integer)  点击访客数,
+       cast(case when 互动点击量 in ('', '-', 'null') then null else 互动点击量 end as integer)  互动点击量,
+       cast(case when 点击率 in ('', '-', 'null') then null else 点击率 end as decimal(10, 6))  点击率,
+       cast(case when 跳转点击率 in ('', '-', 'null') then null else 跳转点击率 end as decimal(10, 6))  跳转点击率,
+       cast(case when 进店访客数 in ('', '-', 'null') then null else 进店访客数 end as integer)  进店访客数,
+       cast(case when 店铺收藏数 in ('', '-', 'null') then null else 店铺收藏数 end as integer)  店铺收藏数,
+       cast(case when 宝贝收藏数 in ('', '-', 'null') then null else 宝贝收藏数 end as integer)  宝贝收藏数,
+       cast(case when 宝贝加购数 in ('', '-', 'null') then null else 宝贝加购数 end as integer)  宝贝加购数,
+       cast(case when 行动访客数 in ('', '-', 'null') then null else 行动访客数 end as integer)  行动访客数,
+       cast(case when 店铺收藏访客数 in ('', '-', 'null') then null else 店铺收藏访客数 end as integer)  店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in ('', '-', 'null') then null else 宝贝收藏访客数 end as integer)  宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in ('', '-', 'null') then null else 宝贝加购访客数 end as integer)  宝贝加购访客数,
+       cast(case when 成交笔数 in ('', '-', 'null') then null else 成交笔数 end as integer)  成交笔数,
+       cast(case when 成交金额 in ('', '-', 'null') then null else 成交金额 end as decimal(10, 2))  成交金额,
+       cast(case when 回报率 in ('', '-', 'null') then null else 回报率 end as decimal(10, 2))  回报率,
+       cast(case when 转化率 in ('', '-', 'null') then null else 转化率 end as decimal(10, 6))  转化率,
+       cast(case when 自然流量增量成交 in ('', '-', 'null') then null else 自然流量增量成交 end as decimal(10, 6))  自然流量增量成交,
+       cast(case when 预售成交笔数 in ('', '-', 'null') then null else 预售成交笔数 end as integer)  预售成交笔数,
+       cast(case when 预售成交金额 in ('', '-', 'null') then null else 预售成交金额 end as decimal(10, 2))  预售成交金额,
+       cast(case when 成交访客数 in ('', '-', 'null') then null else 成交访客数 end as integer)  成交访客数,
+       cast(case when 搜索进店率 in ('', '-', 'null') then null else 搜索进店率 end as decimal(10, 6))  搜索进店率,
+       cast(case when 进店行动率 in ('', '-', 'null') then null else 进店行动率 end as decimal(10, 6))  进店行动率,
+       cast(case when 行动成交率 in ('', '-', 'null') then null else 行动成交率 end as decimal(10, 6))  行动成交率,
+       date(数据入库日期) 数据入库日期
+ FROM "财务_淘系_品销宝_明星店铺报表_推广计划"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+ --dwd_财务_淘系_品销宝_明星店铺报表_账户
+ CREATE TABLE if not exists  public."dwd_财务_淘系_品销宝_明星店铺报表_账户" (
+    日期 date  NULL,
+    访客触达率 numeric(10,6)  NULL,
+    搜索量 integer  NULL,
+    搜索访客数 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    消耗 numeric(10,2)  NULL,
+    触达访客数 integer  NULL,
+    千次展现成本 numeric(10,6)  NULL,
+    点击单价 numeric(10,5)  NULL,
+    跳转点击单价 numeric(10,5)  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    行动访客数 integer  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    回报率 numeric(10,2)  NULL,
+    转化率 numeric(10,6)  NULL,
+    自然流量增量成交 numeric(10,6)  NULL,
+    预售成交笔数 integer  NULL,
+    预售成交金额 numeric(10,2)  NULL,
+    成交访客数 integer  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_明星店铺报表_账户" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_明星店铺报表_账户"
+select  date(日期) 日期,
+       cast(case when 访客触达率 in ('', '-', 'null') then null else 访客触达率 end as decimal(10, 6))  访客触达率,
+       cast(case when 搜索量 in ('', '-', 'null') then null else 搜索量 end as integer)  搜索量,
+       cast(case when 搜索访客数 in ('', '-', 'null') then null else 搜索访客数 end as integer)  搜索访客数,
+       cast(case when 展现量 in ('', '-', 'null') then null else 展现量 end as integer)  展现量,
+       cast(case when 自然流量增量曝光 in ('', '-', 'null') then null else 自然流量增量曝光 end as integer)  自然流量增量曝光,
+       cast(case when 消耗 in ('', '-', 'null') then null else 消耗 end as decimal(10, 2))  消耗,
+       cast(case when 触达访客数 in ('', '-', 'null') then null else 触达访客数 end as integer)  触达访客数,
+       cast(case when 千次展现成本 in ('', '-', 'null') then null else 千次展现成本 end as decimal(10, 6))  千次展现成本,
+       cast(case when 点击单价 in ('', '-', 'null') then null else 点击单价 end as decimal(10, 5))  点击单价,
+       cast(case when 跳转点击单价 in ('', '-', 'null') then null else 跳转点击单价 end as decimal(10, 5))  跳转点击单价,
+       cast(case when 点击量 in ('', '-', 'null') then null else 点击量 end as integer)  点击量,
+       cast(case when 跳转点击量 in ('', '-', 'null') then null else 跳转点击量 end as integer)  跳转点击量,
+       cast(case when 点击访客数 in ('', '-', 'null') then null else 点击访客数 end as integer)  点击访客数,
+       cast(case when 互动点击量 in ('', '-', 'null') then null else 互动点击量 end as integer)  互动点击量,
+       cast(case when 点击率 in ('', '-', 'null') then null else 点击率 end as decimal(10, 6))  点击率,
+       cast(case when 跳转点击率 in ('', '-', 'null') then null else 跳转点击率 end as decimal(10, 6))  跳转点击率,
+       cast(case when 进店访客数 in ('', '-', 'null') then null else 进店访客数 end as integer)  进店访客数,
+       cast(case when 店铺收藏数 in ('', '-', 'null') then null else 店铺收藏数 end as integer)  店铺收藏数,
+       cast(case when 宝贝收藏数 in ('', '-', 'null') then null else 宝贝收藏数 end as integer)  宝贝收藏数,
+       cast(case when 宝贝加购数 in ('', '-', 'null') then null else 宝贝加购数 end as integer)  宝贝加购数,
+       cast(case when 行动访客数 in ('', '-', 'null') then null else 行动访客数 end as integer)  行动访客数,
+       cast(case when 店铺收藏访客数 in ('', '-', 'null') then null else 店铺收藏访客数 end as integer)  店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in ('', '-', 'null') then null else 宝贝收藏访客数 end as integer)  宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in ('', '-', 'null') then null else 宝贝加购访客数 end as integer)  宝贝加购访客数,
+       cast(case when 成交笔数 in ('', '-', 'null') then null else 成交笔数 end as integer)  成交笔数,
+       cast(case when 成交金额 in ('', '-', 'null') then null else 成交金额 end as decimal(10, 2))  成交金额,
+       cast(case when 回报率 in ('', '-', 'null') then null else 回报率 end as decimal(10, 2))  回报率,
+       cast(case when 转化率 in ('', '-', 'null') then null else 转化率 end as decimal(10, 6))  转化率,
+       cast(case when 自然流量增量成交 in ('', '-', 'null') then null else 自然流量增量成交 end as decimal(10, 6))  自然流量增量成交,
+       cast(case when 预售成交笔数 in ('', '-', 'null') then null else 预售成交笔数 end as integer)  预售成交笔数,
+       cast(case when 预售成交金额 in ('', '-', 'null') then null else 预售成交金额 end as decimal(10, 2))  预售成交金额,
+       cast(case when 成交访客数 in ('', '-', 'null') then null else 成交访客数 end as integer)  成交访客数,
+       cast(case when 搜索进店率 in ('', '-', 'null') then null else 搜索进店率 end as decimal(10, 6))  搜索进店率,
+       cast(case when 进店行动率 in ('', '-', 'null') then null else 进店行动率 end as decimal(10, 6))  进店行动率,
+       cast(case when 行动成交率 in ('', '-', 'null') then null else 行动成交率 end as decimal(10, 6))  行动成交率,
+       date(数据入库日期) 数据入库日期
+FROM "财务_淘系_品销宝_明星店铺报表_账户"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1);
+ --dwd_财务_淘系_品销宝_品牌专区报表_账户
+ CREATE TABLE  if not exists  public."dwd_财务_淘系_品销宝_品牌专区报表_账户" (
+    日期 date  NULL,
+    访客触达率 numeric(10,4)  NULL,
+    搜索量 integer  NULL,
+    展现量 integer  NULL,
+    自然流量增量曝光 integer  NULL,
+    触达访客数 integer  NULL,
+    搜索访客数 integer  NULL,
+    回搜展现量 integer  NULL,
+    回搜触达访客数 integer  NULL,
+    点击量 integer  NULL,
+    跳转点击量 integer  NULL,
+    点击访客数 integer  NULL,
+    点击率 numeric(10,6)  NULL,
+    进店访客数 integer  NULL,
+    互动点击量 integer  NULL,
+    跳转点击率 numeric(10,6)  NULL,
+    回搜点击量 integer  NULL,
+    回搜点击访客数 integer  NULL,
+    店铺收藏数 integer  NULL,
+    宝贝收藏数 integer  NULL,
+    宝贝加购数 integer  NULL,
+    宝贝浏览数 integer  NULL,
+    店铺浏览数 integer  NULL,
+    访问时长 numeric(10,6)  NULL,
+    店铺收藏访客数 integer  NULL,
+    宝贝收藏访客数 integer  NULL,
+    宝贝加购访客数 integer  NULL,
+    宝贝浏览访客数 integer  NULL,
+    成交笔数 integer  NULL,
+    成交金额 numeric(10,2)  NULL,
+    转化率 numeric(10,6)  NULL,
+    预售成交笔数 integer  NULL,
+    成交访客数 integer  NULL,
+    自然流量增量成交 numeric(10,6)  NULL,
+    预售成交金额 numeric(10,6)  NULL,
+    搜索进店率 numeric(10,6)  NULL,
+    进店行动率 numeric(10,6)  NULL,
+    行动成交率 numeric(10,6)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_品销宝_品牌专区报表_账户" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_品销宝_品牌专区报表_账户"
+select  date(日期)  日期,
+       cast(case when 访客触达率 in('', '-', 'null')  then null else 访客触达率 end as decimal(10, 4)) 访客触达率,
+       cast(case when 搜索量 in('', '-', 'null')  then null else 搜索量 end as integer) 搜索量,
+       cast(case when 展现量 in('', '-', 'null')  then null else 展现量 end as integer) 展现量,
+       cast(case when 自然流量增量曝光 in('', '-', 'null')  then null else 自然流量增量曝光 end as integer) 自然流量增量曝光,
+       cast(case when 触达访客数 in('', '-', 'null')  then null else 触达访客数 end as integer) 触达访客数,
+       cast(case when 搜索访客数 in('', '-', 'null')  then null else 搜索访客数 end as integer) 搜索访客数,
+       cast(case when 回搜展现量 in('', '-', 'null')  then null else 回搜展现量 end as integer) 回搜展现量,
+       cast(case when 回搜触达访客数 in('', '-', 'null')  then null else 回搜触达访客数 end as integer) 回搜触达访客数,
+       cast(case when 点击量 in('', '-', 'null')  then null else 点击量 end as integer) 点击量,
+       cast(case when 跳转点击量 in('', '-', 'null')  then null else 跳转点击量 end as integer) 跳转点击量,
+       cast(case when 点击访客数 in('', '-', 'null')  then null else 点击访客数 end as integer) 点击访客数,
+       cast(case when 点击率 in('', '-', 'null')  then null else 点击率 end as decimal(10, 6)) 点击率,
+       cast(case when 进店访客数 in('', '-', 'null')  then null else 进店访客数 end as integer) 进店访客数,
+       cast(case when 互动点击量 in('', '-', 'null')  then null else 互动点击量 end as integer) 互动点击量,
+       cast(case when 跳转点击率 in('', '-', 'null')  then null else 跳转点击率 end as decimal(10, 6)) 跳转点击率,
+       cast(case when 回搜点击量 in('', '-', 'null')  then null else 回搜点击量 end as integer) 回搜点击量,
+       cast(case when 回搜点击访客数 in('', '-', 'null')  then null else 回搜点击访客数 end as integer) 回搜点击访客数,
+       cast(case when 店铺收藏数 in('', '-', 'null')  then null else 店铺收藏数 end as integer) 店铺收藏数,
+       cast(case when 宝贝收藏数 in('', '-', 'null')  then null else 宝贝收藏数 end as integer) 宝贝收藏数,
+       cast(case when 宝贝加购数 in('', '-', 'null')  then null else 宝贝加购数 end as integer) 宝贝加购数,
+       cast(case when 宝贝浏览数 in('', '-', 'null')  then null else 宝贝浏览数 end as integer) 宝贝浏览数,
+       cast(case when 店铺浏览数 in('', '-', 'null')  then null else 店铺浏览数 end as integer) 店铺浏览数,
+       cast(case when 访问时长 in('', '-', 'null')  then null else 访问时长 end as decimal(10, 6)) 访问时长,
+       cast(case when 店铺收藏访客数 in('', '-', 'null')  then null else 店铺收藏访客数 end as integer) 店铺收藏访客数,
+       cast(case when 宝贝收藏访客数 in('', '-', 'null')  then null else 宝贝收藏访客数 end as integer) 宝贝收藏访客数,
+       cast(case when 宝贝加购访客数 in('', '-', 'null')  then null else 宝贝加购访客数 end as integer) 宝贝加购访客数,
+       cast(case when 宝贝浏览访客数 in('', '-', 'null')  then null else 宝贝浏览访客数 end as integer) 宝贝浏览访客数,
+       cast(case when 成交笔数 in('', '-', 'null')  then null else 成交笔数 end as integer) 成交笔数,
+       cast(case when 成交金额 in('', '-', 'null')  then null else 成交金额 end as decimal(10, 2)) 成交金额,
+       cast(case when 转化率 in('', '-', 'null')  then null else 转化率 end as decimal(10, 6)) 转化率,
+       cast(case when 预售成交笔数 in('', '-', 'null')  then null else 预售成交笔数 end as integer) 预售成交笔数,
+       cast(case when 成交访客数 in('', '-', 'null')  then null else 成交访客数 end as integer) 成交访客数,
+       cast(case when 自然流量增量成交 in('', '-', 'null')  then null else 自然流量增量成交 end as decimal(10, 6)) 自然流量增量成交,
+       cast(case when 预售成交金额 in('', '-', 'null')  then null else 预售成交金额 end as decimal(10, 6)) 预售成交金额,
+       cast(case when 搜索进店率 in('', '-', 'null')  then null else 搜索进店率 end as decimal(10, 6)) 搜索进店率,
+       cast(case when 进店行动率 in('', '-', 'null')  then null else 进店行动率 end as decimal(10, 6)) 进店行动率,
+       cast(case when 行动成交率 in('', '-', 'null')  then null else 行动成交率 end as decimal(10, 6)) 行动成交率,
+       date(数据入库日期)  数据入库日期
+ FROM "财务_淘系_品销宝_品牌专区报表_账户"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1); 
+ --dwd_财务_淘系_生参_直播_直播订单明细
+ CREATE TABLE if not exists public."dwd_财务_淘系_生参_直播_直播订单明细" (
+    直播标题 character varying(255)  NULL,
+    开播时间 timestamp without time zone  NULL,
+    场次id character varying(255)  NULL,
+    代播主播名称 character varying  NULL,
+    会员名 character varying  NULL,
+    直播间粉丝层级 character varying  NULL,
+    商品id character varying(255)  NULL,
+    商品名称 character varying(255)  NULL,
+    商品一级类目 character varying  NULL,
+    主订单编号 character varying(255)  NULL,
+    子订单编号 character varying(255)  NULL,
+    下单时间 timestamp without time zone  NULL,
+    支付时间 timestamp without time zone  NULL,
+    支付金额 numeric(10,2)  NULL,
+    确认收货时间 timestamp without time zone  NULL,
+    确认收货金额 numeric(10,2)  NULL,
+    代播id character varying(255)  NULL,
+    数据入库日期 date  NULL);
+delete from  "dwd_财务_淘系_生参_直播_直播订单明细" where 数据入库日期=(select cast(入库日期 as date) 入库日期 from "触发器事件表" order by 创建时间 desc limit 1);
+insert into "dwd_财务_淘系_生参_直播_直播订单明细"
+   SELECT  直播标题,
+       cast((CASE WHEN 开播时间= '' THEN NULL WHEN 开播时间= 'null' THEN NULL WHEN 开播时间= '-' THEN NULL ELSE 开播时间 END) as timestamp) 开播时间,
+       "场次id",
+       case when 代播主播名称 in('-', '', 'null')  then null else 代播主播名称 end 代播主播名称,
+       case when 会员名 in('-', '', 'null')  then null else 会员名 end 会员名,
+       case when 直播间粉丝层级 in('-', '', 'null')  then null else 直播间粉丝层级 end 直播间粉丝层级,
+       "商品id",
+       商品标题 商品名称,
+       case when 商品一级类目 in('-', '', 'null') then null else 商品一级类目 end 商品一级类目,
+       父订单 AS 主订单编号,
+       子订单 AS 子订单编号,
+       cast(CASE WHEN 下单时间= '' THEN NULL WHEN 下单时间= 'null' THEN NULL WHEN 下单时间= '-' THEN NULL ELSE 下单时间 END as timestamp) 下单时间,
+       cast(CASE WHEN 支付时间= '' THEN NULL WHEN 支付时间= 'null' THEN NULL WHEN 支付时间= '-' THEN NULL ELSE 支付时间 END as timestamp) 支付时间,
+       cast(CASE WHEN 支付金额= '' THEN NULL WHEN 支付金额= 'null' THEN NULL WHEN 支付金额= '-' THEN NULL ELSE 支付金额 END as DECIMAL(10, 2)) 支付金额,
+       cast(CASE WHEN 确认收货时间= '' THEN NULL WHEN 确认收货时间= 'null' THEN NULL WHEN 确认收货时间= '-' THEN NULL ELSE 确认收货时间 END as timestamp) 确认收货时间,
+       cast(CASE WHEN 确认收货金额= '' THEN NULL WHEN 确认收货金额= 'null' THEN NULL WHEN 确认收货金额= '-' THEN NULL ELSE 确认收货金额 END as DECIMAL(10, 2)) 确认收货金额,
+       "代播id",
+       cast(数据入库日期 as date) 数据入库日期
+ from "财务_淘系_生参_直播_直播订单明细"
+ where 数据入库日期=(
+select 入库日期
+  from "触发器事件表"
+ order by 创建时间 desc
+ limit 1) ;

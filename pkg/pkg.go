@@ -19,17 +19,17 @@ type Writer struct {
 }
 
 type TableInfo struct {
-	TableSchema string
-	TableName string
-	OrdinalPosition string
-	ColumnName string
-	DataType string
+	TableSchema            string
+	TableName              string
+	OrdinalPosition        string
+	ColumnName             string
+	DataType               string
 	CharacterMaximumLength string
-	NumericPrecision string
-	NumericScale string
-	IsNullable string
-	ColumnDefault string
-	Description string
+	NumericPrecision       string
+	NumericScale           string
+	IsNullable             string
+	ColumnDefault          string
+	Description            string
 }
 
 func (lw Writer) Printf(format string, v ...interface{}) {
@@ -87,9 +87,9 @@ func ExecExcel(filename string) error {
 	tableFields := GetTableFields(table)
 	tableColumnMap := GetTableFieldsMap(tableFields)
 	for _, info := range head {
-		if _,ok := tableColumnMap[strings.ToLower(info)];!ok {
+		if _, ok := tableColumnMap[strings.ToLower(info)]; !ok {
 			// 创建列
-			Db.Exec("ALTER TABLE public."+table+" ADD COLUMN "+info+" VARCHAR(255);")
+			Db.Exec("ALTER TABLE public." + table + " ADD COLUMN " + info + " VARCHAR(255);")
 		}
 	}
 
@@ -200,10 +200,14 @@ func GetTableName(filename string) (table string, productId string) {
 			}
 			table = strings.ReplaceAll(table, "_"+s, "")
 		}
+		if strings.Contains(s, "日订单") {
+			table = strings.ReplaceAll(table, "_"+s, "")
+		}
 	}
 	table = strings.Trim(table, "_")
 	table = strings.ToLower(table)
-
+	table = strings.ReplaceAll(table, "_每日执行", "")
+	table = "财务_淘系_" + table
 	return table, productId
 }
 
@@ -237,7 +241,7 @@ func CreateTable() {
 	}
 	sqls, err := ioutil.ReadFile(sqlFile)
 	if err != nil {
-		fmt.Println("error 读取sql文件失败：", "sql所在路径路径："+ GetCurrPath(), sqlFile, err)
+		fmt.Println("error 读取sql文件失败：", "sql所在路径路径："+GetCurrPath(), sqlFile, err)
 		os.Exit(0)
 	}
 
@@ -262,7 +266,7 @@ func SqlExec() {
 	}
 	sqls, err := ioutil.ReadFile(sqlFile)
 	if err != nil {
-		fmt.Println("error 读取sql_exec文件失败：", "当前执行路径："+ GetCurrPath(), sqlFile, err)
+		fmt.Println("error 读取sql_exec文件失败：", "当前执行路径："+GetCurrPath(), sqlFile, err)
 		os.Exit(0)
 	}
 
@@ -272,6 +276,28 @@ func SqlExec() {
 		os.Exit(0)
 	}
 	fmt.Println("sql_exec文件执行完成")
+}
+
+func SqlDW() {
+	// Db.Exec(config.CreateSql)
+
+	sqlFile := GetCurrPath() + PathFlag + "sql_dw"
+	if !IsFile(sqlFile) {
+		fmt.Println("error sql_dw文件不存在：", sqlFile)
+		os.Exit(0)
+	}
+	sqls, err := ioutil.ReadFile(sqlFile)
+	if err != nil {
+		fmt.Println("error 读取sql_dw文件失败：", "当前执行路径："+GetCurrPath(), sqlFile, err)
+		os.Exit(0)
+	}
+
+	err = Db.Exec(string(sqls)).Error
+	if err != nil {
+		fmt.Println("error 执行sql_dw报错：", err)
+		os.Exit(0)
+	}
+	fmt.Println("sql_dw文件执行完成")
 }
 
 func IsSingleDigit(data string) bool {
@@ -323,21 +349,21 @@ func GetCurrPath() string {
 
 func CheckTableExist(tableName string) bool {
 	var count int64
-	Db.Raw("select * from pg_class where relname = '"+tableName+"'").Count(&count)
+	Db.Raw("select * from pg_class where relname = '" + tableName + "'").Count(&count)
 	if count > 0 {
 		return true
 	}
 	return false
 }
 
-func CreateTableAuto(tableName string, fields []string)  {
+func CreateTableAuto(tableName string, fields []string) {
 	if len(fields) == 0 {
 		return
 	}
 	sqlField := make([]string, 0)
-	sql := "CREATE TABLE IF NOT EXISTS public.\""+tableName+"\" ( "
+	sql := "CREATE TABLE IF NOT EXISTS public.\"" + tableName + "\" ( "
 	for _, field := range fields {
-		sqlField = append(sqlField, "\"" + strings.ToLower(field) + "\" varchar(255)")
+		sqlField = append(sqlField, "\""+strings.ToLower(field)+"\" varchar(255)")
 	}
 	sql += strings.Join(sqlField, ",")
 	sql += " );"

@@ -109,6 +109,8 @@ func main() {
 		fmt.Println("连接数据库失败：", err)
 	}
 
+	// 1、执行sql文件
+	pkg.CreateTable()
 
 	allFileM := make(map[string]string)
 	latestDateM := make(map[string]string)
@@ -148,8 +150,6 @@ func main() {
 		os.Exit(0)
 	}
 
-	pkg.CreateTable()
-
 	for k, v := range allFileM {
 		headKey, dateKey := pkg.GetHeadKeyDateKey(dir, k)
 		date,ok :=latestDateM[headKey]
@@ -188,11 +188,31 @@ func main() {
 	}
 
 	maxKey := pkg.GetMaxImportTimeData(ImportTimeMap)
+
+	// 2、创建触发器表
+	err = pkg.Db.Exec(`
+CREATE TABLE  IF NOT EXISTS  public."触发器事件表"
+(
+    入库日期 varchar(100) null,
+    更新表数量 int          null,
+    创建时间 timestamp(10) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);`).Error
+	if err != nil {
+		fmt.Println("error 创建触发器表失败：", err)
+		os.Exit(0)
+	}
+
+	// 3、忘触发器表插入数据
 	err = pkg.Db.Exec("insert into public.触发器事件表 (入库日期,更新表数量) values (?,?)", maxKey, ImportTimeMap[maxKey]).Error
 	if err != nil {
 		fmt.Println("error 插入触发器事件表报错：", err)
 		os.Exit(0)
 	}
+
+	// 4、执行sql_exec文件
+	pkg.SqlDW()
+
+	// 5、执行sql_exec文件
 	pkg.SqlExec()
 
 	fmt.Println("success 脚本执行成功")
